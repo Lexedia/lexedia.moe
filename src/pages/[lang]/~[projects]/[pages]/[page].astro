@@ -1,0 +1,63 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { Page, GetStaticPaths } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+import BaseLayout from '@/layouts/Base'
+import PostPreview from '@/components/blog/MainPostPreview'
+import { siteConfig } from 'src/consts'
+import {
+  getSupportedLanguages, filterByLanguage, type SupportedLanguage, useUITranslations, getLangFromUrl,
+  getAllPosts,
+  sortMDByDate,
+  sortMDByPinned,
+} from '@/utils'
+import routing from '@/i18n/routing'
+
+const lang = getLangFromUrl(Astro.url)
+
+const t = useUITranslations(lang as SupportedLanguage)
+
+interface Props {
+  page: Page<CollectionEntry<'project'>>
+}
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allProjects = await getAllPosts('project', true)
+
+  const sortedByDateProjects = sortMDByDate(allProjects)
+
+  const sortedByPinned = sortMDByPinned(sortedByDateProjects)
+
+  return getSupportedLanguages().flatMap((lang) => {
+    const projects = filterByLanguage(sortedByPinned, lang as SupportedLanguage)
+
+    const pages = routing[lang].pages.text
+    const tProjects = routing[lang].projects.text
+
+    return paginate(projects, {
+      params: {
+        lang,
+        pages,
+        projects: tProjects,
+      },
+      pageSize: siteConfig.settings.paginationSize,
+    })
+  })
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props
+---
+
+<BaseLayout title={t('projects.title').text}>
+  <section>
+    <h2 class='title'>Projects</h2>
+    <ul role='list' class='space-y-2 sm:space-y-4'>
+      {page.data.map((p) => <PostPreview post={p} withDesc />)}
+    </ul>
+  </section>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import routing from '@/i18n/routing'
+import { getSupportedLanguages } from '@/utils'
+import type { GetStaticPaths } from 'astro'
+export const getStaticPaths = (() => {
+  const locales = getSupportedLanguages()
+  return locales.map((lang) => {
+    const pages = routing[lang].pages.text
+
+    return {
+      params: {
+        lang,
+        pages,
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+return Astro.redirect(`${Astro.url.pathname}/1`)
+---

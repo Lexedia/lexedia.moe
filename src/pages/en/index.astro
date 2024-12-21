@@ -1,0 +1,68 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import BaseLayout from '@/layouts/Base'
+import avatar from '@/assets/avatar.jpg'
+import { Image } from 'astro:assets'
+
+import Friend from '@/components/Friend'
+
+import friends from '@/data/friends.json'
+---
+
+<BaseLayout title="Home" image={avatar}>
+  <section class="relative flex flex-col">
+    <h1 class="title">Hey you :3</h1>
+    <div class="absolute right-0 top-0 m-10 md:m-5 my-5 w-64">
+      <Image class="h-fit rounded-md" src={avatar} alt='My avatar' />
+    </div>
+    <p class="mb-4 sm:mb-8 max-w-[calc(100%-20rem)]">
+      Hello! I'm Lexedia, Lexie, Lilie, Lina and many others names lol.<br />
+      I'm a developer, mainly focused on backend development, but I also like to do some frontend stuff (&lt;- me when i lie).
+    </p>
+  </section>
+
+  <section class="mt-8 sm:mt-16">
+    <h2 class="title">What do I do?</h2>
+    <p class="mb-4 sm:mb-8 max-w-[calc(100%-20rem)]">
+      Currently? It's complicated.<br />
+      You can check all my projects <a class="anchor-link" href="/en/~projects/pages/1">here</a> though!
+    </p>
+  </section>
+
+  <section class="mt-8 sm:mt-16">
+    <h2 class="title">Frens</h2>
+    <div class="flex flex-wrap gap-4 md:gap-5 pt-5 sm:gap-3">
+      {
+        friends.map((friend) => (
+          <Friend {...friend} />
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- <section class="mt-16">
+    <h2 class="title">Technologies</h2>
+    <ul class="space-y-4 sm:space-y-2">
+      {
+        tech.map(({ href, title, desc }) => (
+          <li>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="anchor-link inline-block"
+            >
+              {title}
+            </a>
+            : <p class="inline-block sm:mt-2">{desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section> -->
+</BaseLayout>

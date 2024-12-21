@@ -1,0 +1,136 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import { type CollectionEntry, render } from 'astro:content'
+import { Image } from 'astro:assets'
+import Layout from '../layouts/Sidebar.astro'
+import FormattedDate from '../components/FormattedDate.astro'
+import TOC from '@/components/TableOfContents'
+import BackToTopBtn from '@/components/BackToTopBtn'
+import CopyBtn from '@/components/CopyBtn'
+import { Icon } from 'astro-icon/components'
+import { getLangFromUrl, useUITranslations } from '@/utils'
+import routing from '@/i18n/routing'
+
+interface Props {
+  post: CollectionEntry<'blog'>
+  displayLargeImage?: boolean
+}
+
+const { post, displayLargeImage } = Astro.props
+
+const {
+  data: {
+    title, description, pubDate, updatedDate, heroImage, ogImage, tags, series, draft,
+  },
+} = post
+
+const { headings, remarkPluginFrontmatter } = await render(post)
+const { readingDuration } = remarkPluginFrontmatter
+const mins = Math.ceil(readingDuration / 1000 / 60)
+const minutes = mins ? mins : 0
+const lang = getLangFromUrl(Astro.url)
+const translate = useUITranslations(lang)
+
+const seriesT = routing[lang].series.text
+const tagsT = routing[lang].tags.text
+
+const socialImage = ogImage ?? heroImage?.src
+const dateTimeOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}
+
+const articleDate = updatedDate?.toISOString() ?? pubDate.toISOString()
+---
+
+<Layout title={title} description={description} image={socialImage} articleDate={articleDate} displayLargeImage={displayLargeImage}>
+  <article class='bg prose dark:prose-invert prose-code text-textColor max-w-4xl'>
+    <header class='space-y-2'>
+      {
+        heroImage && (
+          <div class='aspect-h-9 aspect-w-16 mb-6 w-full flex justify-center'>
+            {<Image src={heroImage.src} alt={heroImage.alt ?? null} class='m-0' />}
+          </div>
+        )
+      }
+      {
+        series && (
+          <div class='md:sr-only not-sr-only'>
+            <span>Part of series:</span>
+            <a class='anchor-link' href={`/~${seriesT}/${series}`}>
+              {series}
+            </a>
+          </div>
+        )
+      }
+      <div class='flex gap-2 items-center'>
+        <h1 class='text-3xl my-0'>{title}</h1>
+        {draft && <span class='px-1 py-0 bg-red-200 text-red-600 text-sm font-semibold'>draft</span>}
+      </div>
+      <span class='font-semibold text-textColor flex gap-2 items-center'>
+        <FormattedDate date={pubDate} dateTimeOptions={dateTimeOptions} />
+        <span>
+          / {translate('blog.timeToRead', 'text', minutes, minutes > 1 ? translate('blog.timeToRead').plural : '')}
+        </span>
+        {
+          updatedDate && (
+            <div class='italic px-2 bg-accent-2 w-fit text-sm font-normal'>
+              {translate('blog.lastUpdated').text} <FormattedDate date={updatedDate} dateTimeOptions={dateTimeOptions} />
+            </div>
+          )
+        }
+      </span>
+      {
+        tags && (
+          <ul class='not-prose flex gap-2 flex-wrap'>
+            <Icon class='w-5 h-5' name='carbon:tag-group' aria-hidden='true' focusable='false' />
+            {tags.map((tag: string) => (
+              <li class='tag'>
+                <a href={`/${lang}/~${tagsT}/${tag}`}>{tag}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    <hr class='my-4' />
+    <main
+      class="prose-sm prose-headings:font-semibold prose-headings:ml-4 prose-headings:before:absolute prose-headings:before:-ms-4
+      prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none prose-a:text-accent">
+      <slot />
+    </main>
+    <BackToTopBtn />
+  </article>
+  <aside slot='sidebar' class='hidden sm:block'>
+    <div class='flex flex-col space-y-2'>
+      <span class='!my-4 text-accent' aria-hidden>---</span>
+      <p>
+        {description}
+      </p>
+      {
+        series && (
+          <div class='pt-2 hidden md:block'>
+            <span>Part of series: </span>
+            <br />
+            <ul>
+              <li>
+                <a class='anchor-link' href={`/${lang}/~${seriesT}/${series}`}>
+                  {series}
+                </a>
+              </li>
+            </ul>
+          </div>
+        )
+      }
+    </div>
+    {!!headings.length && <TOC headings={headings} />}
+  </aside>
+</Layout>
+
+<CopyBtn />

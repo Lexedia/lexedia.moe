@@ -1,0 +1,44 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import BaseHead from '../components/BaseHead.astro'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import { siteConfig } from '../consts.ts'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+  image?: ImageMetadata | undefined;
+  articleDate?: string | undefined;
+  displayLargeImage?: boolean | undefined;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  image,
+  articleDate,
+  displayLargeImage,
+} = Astro.props;
+
+---
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <BaseHead title={title} description={description} image={image} articleDate={articleDate} displayLargeImage={displayLargeImage}/>
+  </head>
+  <body>
+    <Header/>
+    <main class="grid grid-cols-1 gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-4">
+      <slot/>
+      <slot name="sidebar"/>
+    </main>
+    <Footer/>
+  </body>
+</html>

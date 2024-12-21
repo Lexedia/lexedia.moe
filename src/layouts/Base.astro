@@ -1,0 +1,44 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import BaseHead from '@/components/BaseHead'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { getLangFromUrl } from '@/utils'
+import ui from '@/i18n/ui'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: ImageMetadata;
+}
+
+const lang = getLangFromUrl(Astro.url)
+
+const {
+  title = ui[lang]['site.title'].text,
+  description = ui[lang]['site.description'].text,
+  image,
+} = Astro.props
+---
+
+<!doctype html>
+<html lang={lang || Astro.currentLocale} class="dark">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="bg">
+        <slot />
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

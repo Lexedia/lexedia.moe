@@ -1,0 +1,185 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: monospace;
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/SpaceMono-Regular.ttf) format('opentype');
+  }
+
+  :root {
+    color-scheme: light;
+    --theme-bg: #efefef;
+    --theme-text: #222222;
+    --theme-accent: #dd7878;
+    --theme-accent-2: #bcc0cd;
+    --theme-surface: #e6e6e6;
+    --theme-quote: #dd7895;
+    --theme-highlight: #dd7878;
+    --theme-pill: #dd7878;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+    --theme-bg: #1d1d1d;
+    --theme-text: #ededed;
+    --theme-accent: #deadbe;
+    --theme-accent-2: #ed759f;
+    --theme-surface: #2f2f2f;
+    --theme-quote: #ee6468;
+    --theme-highlight: #00b4d8;
+    --theme-pill: #ef5e5e;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  html body {
+    @apply mx-auto flex min-h-screen max-w-6xl flex-col px-4 pt-4 md:pt-8 font-mono text-sm font-normal antialiased bg-bgColor text-textColor;
+  }
+
+  .prose-code blockquote {
+    @apply text-quote border-l-0;
+  }
+
+  .prose-code a {
+    @apply no-underline;
+  }
+
+  .prose-code strong {
+    font-weight: 700;
+  }
+
+  .prose-code :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply bg-accent !text-surface px-1 py-0;
+  }
+
+  .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *))::before {
+    content: none !important;
+  }
+
+  .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *))::after {
+    content: none !important;
+  }
+
+  .prose-code hr {
+    border-top-style: dashed;
+    border-top-width: 0.5px;
+    @apply border-accent my-4;
+  }
+  .prose-code thead {
+    @apply border-b-0;
+  }
+
+  .prose-code thead th {
+    @apply font-bold border-b border-dashed border-accent;
+  }
+
+  .prose-code tbody tr {
+    @apply border-b-0;
+  }
+
+  .prose-code tfoot {
+    @apply font-bold border-t border-dashed border-accent;
+  }
+
+  .prose-code sup {
+    @apply ms-0.5;
+  }
+
+  .prose-code sup > a {
+    @apply bg-none;
+  }
+
+  .prose-code sup > a:hover {
+    @apply text-accent no-underline bg-none;
+  }
+
+  .prose-code sup > a:before {
+    content: '[';
+    @apply text-accent;
+  }
+
+  .prose-code sup > a:after {
+    content: ']';
+    @apply text-accent;
+  }
+
+  .prose-code mark {
+    @apply bg-accent;
+  }
+
+  .prose-code li::marker {
+    @apply text-accent;
+  }
+
+  .prose-code table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .tag {
+    @apply bg-accent px-1 py-0 text-bgColor font-semibold text-sm;
+  }
+
+  .tag:before {
+    content: '#';
+    @apply -mr-2;
+  }
+
+  .anchor-link {
+    @apply underline underline-offset-4 decoration-[color:var(--theme-accent)];
+  }
+
+  .anchor-link:hover {
+    @apply underline underline-offset-4 decoration-[color:var(--theme-accent-2)];
+  }
+
+  .bg {
+    @apply p-4 bg-surface;
+  }
+
+  .copy-code {
+    @apply absolute top-2 right-2 bg-accent text-bgColor p-0.5 border border-accent hover:bg-bgColor hover:text-accent transition-all duration-200 text-sm;
+  }
+
+  .title:before {
+    content: '#';
+    @apply mr-2 text-accent-2;
+  }
+
+  .title {
+    @apply text-lg font-bold mb-4;
+  }
+
+  hr {
+    @apply border-accent border-dashed my-6;
+  }
+
+  ::selection {
+    @apply bg-highlight text-bgColor;
+  }
+
+  ::-moz-selection {
+    @apply bg-highlight text-bgColor;
+  }
+
+  .fade-in {
+    @apply transition-opacity ease-in opacity-100 duration-700;
+  }
+
+  .fade-out {
+    @apply transition-opacity ease-in opacity-0 duration-700;
+  }
+}

@@ -1,0 +1,30 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+const files: Record<string, { default: ImageMetadata }> = import.meta.glob('../assets/friends/*.{png,jpg,jpeg,gif}', { eager: true })
+
+interface Props {
+  name: string
+  picture: string
+  link: string
+}
+
+const { name, picture, link } = Astro.props
+---
+
+<a href={link} title={`${name}'s website`} target="_blank" class="anchor-link">
+  <Image src={files[`../assets/friends/${picture}`]!.default} alt={`${name}'s webring`} decoding='async' />
+</a>
+
+<style>
+  a {
+    image-rendering: pixelated;
+  }
+</style>

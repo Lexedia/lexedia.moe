@@ -1,0 +1,49 @@
+<!--
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+-->
+
+<script>
+import { h } from 'src/utils/dom'
+
+const copyButtonLabel = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+<path fill="currentColor" d="M6 19V1h9l6 6v12zm8-11h5l-5-5zM2 23V7h2v14h11v2z"/>
+</svg>`
+
+
+const codeBlocks = Array.from(document.querySelectorAll('pre.astro-code'))
+
+for (const codeBlock of codeBlocks) {
+  const mainDiv = codeBlock.parentElement
+  if (mainDiv) {
+    const copyButton = h('button', {
+      class: 'copy-code',
+      title: 'Copy code block',
+      tabindex: 0,
+      async onclick() {
+        await copyCode(codeBlock, copyButton)
+      },
+    }, copyButtonLabel)
+
+    const wrapperDiv = h('div', { class: 'relative' }, copyButton)
+    mainDiv.replaceChild(wrapperDiv, codeBlock)
+    wrapperDiv.appendChild(codeBlock)
+  }
+}
+
+async function copyCode(block: Element, button: HTMLElement) {
+  const code = block.querySelector('code')
+  const text = code?.innerText ?? ''
+
+  await navigator.clipboard.writeText(text)
+
+  button.innerText = 'Code Copied'
+
+  setTimeout(() => {
+    button.innerHTML = copyButtonLabel
+  }, 700)
+}
+</script>

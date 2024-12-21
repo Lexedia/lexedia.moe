@@ -1,0 +1,59 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import BaseLayout from '../layouts/Base.astro'
+import { useGeneralTranslations } from '@/utils'
+const t = useGeneralTranslations('en')
+---
+
+<BaseLayout title='404'>
+  <section class='flex justify-center items-center h-80 border-dashed border border-accent'>
+    <div class='flex-col gap-2 text-8xl p-4 h-min'>
+      <span id='status-code'> 404</span>
+      <div class='border-b-2 border-accent w-full border-solid blink mt-1'></div>
+    </div>
+    <span id='404-msg'>{t(404).text}</span>
+  </section>
+</BaseLayout>
+
+<style>
+  #status-code:before {
+    content: './';
+    @apply -mr-16 text-accent-2;
+  }
+
+  .blink {
+    animation: blink-animation 1.5s steps(2, start) infinite;
+    -webkit-animation: blink-animation 1.5s steps(2, start) infinite;
+  }
+
+  @keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  @-webkit-keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }
+</style>
+
+<script>
+  import general from '@/i18n/general'
+  import type { SupportedLanguage } from '@/utils'
+
+  const lang = localStorage.getItem('lang') as SupportedLanguage | null
+
+  if (lang) {
+    const t = general[lang][404]
+
+    const message = document.getElementById('404-msg')!
+    message.textContent = t.text
+  }
+</script>

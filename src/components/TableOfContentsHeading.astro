@@ -1,0 +1,41 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { TocItem } from '@/components/TableOfContents'
+interface Props {
+  heading: TocItem;
+}
+
+const { heading } = Astro.props;
+---
+
+<li>
+  <a href={'#' + heading.slug} id={`toc-${heading.slug}`}>
+    {heading.text}
+  </a>
+  {
+    heading.subheadings.length > 0 && (
+      <ul class="ml-2">
+        {heading.subheadings.map((subheading) => (
+          <Astro.self heading={subheading} />
+        ))}
+      </ul>
+    )
+  }
+</li>
+
+<style>
+  li:before {
+    content: "#";
+    @apply -mr-1 text-accent;
+  }
+
+  .active-toc {
+    @apply text-accent;
+  }
+</style>
+

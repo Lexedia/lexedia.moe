@@ -1,0 +1,59 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { CollectionEntry } from 'astro:content'
+import type { HTMLTag, Polymorphic } from 'astro/types'
+import FormattedDate from '@/components/FormattedDate'
+import { Icon } from 'astro-icon/components'
+import { getLangFromUrl, getSlugFromCollectionEntry } from '@/utils'
+import routing from '@/i18n/routing'
+
+type Props<T extends HTMLTag = 'li'> = Polymorphic<{ as: T }> & {
+  post: CollectionEntry<'blog' | 'project'>
+  withDesc?: boolean | undefined
+}
+
+const { post, withDesc = false } = Astro.props
+const postDate = post.collection === 'blog' ? (post.data.updatedDate ?? post.data.pubDate) : post.data.pubDate
+const tags = post.collection === 'blog' ? post.data.tags ?? [] : []
+const lang = getLangFromUrl(Astro.url)
+const slug = getSlugFromCollectionEntry(post)
+const isPinned = !!post.data.order
+const tagRoute = routing[lang].tags.text
+const collectionRoute = post.collection === 'blog' ? 'blog' : routing[lang].projects.text
+---
+
+<li>
+  <span class="flex items-center gap-2">
+    <a href={`/${lang}/~${collectionRoute}/${slug}`} class='post-item'>
+      <h4 class='anchor-link inline font-bold'>{post.data.title}</h4>
+    </a>
+    {isPinned && <Icon class='h-5 w-5 inline text-accent rotate-45 -ml-1' name='mdi:pin' aria-hidden='true' focusable='false' />}
+  </span>
+  <p class='date pr-2 mt-1'>
+    <FormattedDate date={postDate} locale={lang} />
+  </p>
+  {withDesc && <p class='italic' set:html={post.data.description.replaceAll('\n', '<br />')}></p>}
+  <ul class:list={[
+    'flex gap-2 flex-wrap mb-4',
+    { 'mt-4': withDesc },
+  ]}>
+    {tags.map((tag) => (
+      <li class='tag'>
+        <a href={`/${lang}/~${tagRoute}/${tag}`} aria-label={`tag: ${tag}`}>
+          {tag}
+        </a>
+      </li>
+    ))}
+  </ul>
+</li>
+<style>
+  .post-item:before {
+    content: '#';
+    @apply text-accent-2;
+  }
+</style>

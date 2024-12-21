@@ -1,0 +1,62 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import BaseLayout from '@/layouts/Base'
+import {
+  filterByLanguage,
+  getAllPosts,
+  getSupportedLanguages,
+  getUniqueWithCountByProperty,
+  useUITranslations,
+} from '@/utils'
+import type { GetStaticPaths } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+import routing from '@/i18n/routing'
+
+export const getStaticPaths = (() => {
+  return getSupportedLanguages().map((lang) => {
+    const seriesT = routing[lang].series.text
+
+    return {
+      params: {
+        lang,
+        seriesT,
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+const posts = await getAllPosts('blog')
+
+const { lang } = Astro.params
+const filteredByLang = filterByLanguage(posts, lang)
+const seriesT = routing[lang].series.text
+const series = getUniqueWithCountByProperty(
+  'series',
+  filteredByLang as CollectionEntry<'blog'>[],
+)
+const t = useUITranslations(lang)
+---
+
+<BaseLayout title="Series">
+  <h1 class="title flex font-bold text-xl items-center mb-4">{t('series.title').text}</h1>
+  <ul>
+    {
+      series.map(([
+        s,
+        count,
+      ]) => (
+        <li class="my-2">
+          <a class="anchor-link" href={`/${lang}/~${seriesT}/${s}`}>
+            #{s}
+          </a>
+          ({count})
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

@@ -1,0 +1,105 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { Page, GetStaticPaths } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+import BaseLayout from '@/layouts/Sidebar'
+import PostPreview from '@/components/blog/MainPostPreview'
+import Pagination from '@/components/Pagination'
+import {
+  getAllPosts, sortMDByDate, sortMDByPinned, filterByLanguage, getSupportedLanguages, type SupportedLanguage, useUITranslations,
+} from '@/utils'
+import { siteConfig } from 'src/consts'
+import routing from '@/i18n/routing'
+//@ts-expect-error: apparently Astro doesn't like svg imports
+import TagIcon from '@/icons/TagIcon'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getAllPosts('blog', true)
+  const allPostsByDate = sortMDByDate(allPosts)
+  const allPostsByPinned = sortMDByPinned(allPostsByDate)
+
+  return getSupportedLanguages().flatMap((lang) => {
+    const filteredByLang = filterByLanguage(allPostsByPinned, lang as SupportedLanguage)
+    const tags = [ ...new Set(filteredByLang.map((p) => p.collection === 'blog' && p.data.tags).flat().filter(Boolean)) ]
+
+    const pages = routing[lang].pages.text
+
+    return paginate(filteredByLang, {
+      params: {
+        lang,
+        pages,
+      },
+      props: { tags },
+      pageSize: siteConfig.settings.paginationSize,
+    })
+  })
+}) satisfies GetStaticPaths
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>
+  tags: string[]
+}
+
+const { page, tags } = Astro.props
+const { lang } = Astro.params
+
+const t = useUITranslations(lang)
+const tagRoute = routing[lang].tags.text
+
+const meta = {
+  title: t('posts.title').text,
+  description: t('posts.description').text,
+}
+
+const paginationProps = {
+  ...(page.url.prev && {
+    prevUrl: {
+      url: page.url.prev,
+      text: `${t('general.previous').text} ${t('posts.title').text}`,
+    },
+  }),
+  ...(page.url.next && {
+    nextUrl: {
+      url: page.url.next,
+      text: `${t('general.next').text} ${t('posts.title').text} →`,
+    },
+  }),
+}
+---
+
+<BaseLayout {...meta}>
+  <section class='bg'>
+    <h1 class='title'>{t('posts.title').text}</h1>
+    <ul class='flex flex-col gap-4'>
+      {page.data.map((post) => <PostPreview post={post} withDesc />)}
+    </ul>
+    <Pagination {...paginationProps} />
+  </section>
+  {
+    !!tags.length && (
+      <aside slot='sidebar'>
+        <h2 class='flex font-semibold text-lg items-center mb-4'>
+          <TagIcon />
+          {t('tags.title').plural}
+        </h2>
+        <ul class='flex gap-2 flex-wrap mb-4'>
+          {tags.map((tag) => (
+            <li class='tag'>
+              <a href={`/${lang}/~${tagRoute}/${tag}`} aria-label={`tag: ${tag}`}>
+                {tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href={`/${lang}/~${tagRoute}`} class='anchor-link' aria-label='View all blog tags'>
+          {t('blog.tags.seeMore').text} -&gt;
+        </a>
+      </aside>
+    )
+  }
+</BaseLayout>

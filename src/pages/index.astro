@@ -1,0 +1,19 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import Base from '@/layouts/Base'
+import { siteConfig } from 'src/consts'
+---
+
+<Base title={siteConfig.title} />
+
+<script>
+  const lang = localStorage.getItem('lang')
+  if (lang) {
+    window.location.pathname = lang
+  }
+</script>

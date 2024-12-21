@@ -1,0 +1,50 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro'
+import { render, type CollectionEntry } from 'astro:content'
+import ProjectLayout from '@/layouts/Project'
+import {
+  filterByLanguage,
+  getAllPosts,
+  getSlugFromCollectionEntry,
+  getSupportedLanguages,
+  type SupportedLanguage,
+} from '@/utils'
+import routing from '@/i18n/routing'
+
+export const getStaticPaths = (async () => {
+  const allProjects = await getAllPosts('project')
+
+  return getSupportedLanguages().flatMap((lang) => {
+    const projectsFilteredByLang = filterByLanguage(
+      allProjects,
+      lang as SupportedLanguage,
+    )
+    return projectsFilteredByLang.map((project) => {
+      const slug = getSlugFromCollectionEntry(project)
+      const projects = routing[lang].projects.text
+      return {
+        params: {
+          lang,
+          projects,
+          slug,
+        },
+        props: { project },
+      }
+    })
+  })
+}) satisfies GetStaticPaths
+export type Props = InferGetStaticPropsType<typeof getStaticPaths>
+
+const { project } = Astro.props
+const { Content } = await render(project);
+---
+
+<ProjectLayout project={project as CollectionEntry<'project'>}>
+  <Content />
+</ProjectLayout>

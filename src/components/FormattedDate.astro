@@ -1,0 +1,25 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { HTMLAttributes } from 'astro/types'
+import { getFormattedDate } from '@/utils'
+
+type Props = Omit<HTMLAttributes<'time'>, 'datetime' | 'title'> & {
+  date: Date;
+  dateTimeOptions?: Intl.DateTimeFormatOptions;
+  locale?: string;
+}
+
+const {
+  date, dateTimeOptions, locale, ...attrs
+} = Astro.props
+const postDate = getFormattedDate(date, dateTimeOptions, locale);
+---
+
+<time datetime={date.toISOString().slice(0, -1)} {...attrs} title={postDate}>
+  {postDate}
+</time>

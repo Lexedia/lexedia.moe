@@ -1,0 +1,24 @@
+diff --git a/lib/rules/header.js b/lib/rules/header.js
+index 5e35f5dacc0818128598f12b243df265b634113a..98def4222b6df8f827b3a1f173d0adfb34801198 100644
+--- a/lib/rules/header.js
++++ b/lib/rules/header.js
+@@ -1,6 +1,7 @@
+ 'use strict';
+ 
+ const fs = require('fs');
++const util = require('util');
+ 
+ const LINEBREAK_MATCHER = /\r\n|[\r\n\u2028\u2029]/u;
+ 
+@@ -138,6 +139,11 @@ module.exports = {
+     return {
+       Program: function(programNode) {
+ 
++        // ignore astro
++        if (['localStorage', 'window', 'document'].some((key) => sourceCode.getText().includes(key))) {
++          return;
++        }
++
+         // ignore Vue SFC
+         if (programNode.templateBody) {
+           return;

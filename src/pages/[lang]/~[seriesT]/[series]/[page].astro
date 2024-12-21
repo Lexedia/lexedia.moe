@@ -1,0 +1,100 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { Page, GetStaticPaths } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+import BaseLayout from '@/layouts/Base'
+import {
+  getAllPosts,
+  getUniqueByProperty,
+  sortMDByDate,
+  getPostsBySeries,
+  getSupportedLanguages,
+  filterByLanguage,
+  type SupportedLanguage,
+  useUITranslations,
+} from '@/utils'
+import PostPreview from '@/components/blog/MainPostPreview'
+import Pagination from '@/components/Pagination'
+import { siteConfig } from 'src/consts'
+import routing from '@/i18n/routing'
+
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const allPosts = await getAllPosts('blog')
+  const allPostsByDate = sortMDByDate(allPosts, 'ascending')
+  const uniqueSeries = getUniqueByProperty('series', allPostsByDate)
+
+  return getSupportedLanguages().flatMap((lang) => {
+    return uniqueSeries.flatMap((series) => {
+      const seriesT = routing[lang].series.text
+      const postsFilteredBySeries = getPostsBySeries(
+        series,
+        allPostsByDate,
+      )
+      const postsFilteredByLang = filterByLanguage(
+        postsFilteredBySeries,
+        lang,
+      )
+
+      return paginate(postsFilteredByLang, {
+        params: {
+          lang,
+          seriesT,
+          series,
+        },
+        pageSize: siteConfig.settings.paginationSize,
+      })
+    })
+  })
+}
+
+const { series, lang } = Astro.params as {
+  series: string;
+  lang: SupportedLanguage
+}
+const { page } = Astro.props
+const seriesT = routing[lang].series.text
+
+const t = useUITranslations(lang)
+
+const meta = {
+  title: `${t('series.title').text}: ${series}`,
+  description: t('series.description', 'text', series),
+}
+
+const paginationProps = {
+  ...(page.url.prev && {
+    prevUrl: {
+      url: page.url.prev,
+      text: `${t('general.previous').text} ${t('series.join', 'text', series)}`,
+    },
+  }),
+  ...(page.url.next && {
+    nextUrl: {
+      url: page.url.next,
+      text: `${t('general.next').text} ${t('series.join', 'text', series)} →`,
+    },
+  }),
+}
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <h1 class="title flex items-center">
+    <a href={`/${lang}/~${seriesT}`} class="text-accent sm:hover:underline">{t('series.title').text}</a>
+    <span class="me-3 ms-2">→</span>
+    <span>#{series}</span>
+  </h1>
+  <ul class="flex flex-col gap-4">
+    {page.data.map((post) => <PostPreview post={post} withDesc />)}
+  </ul>
+  <Pagination {...paginationProps} />
+</BaseLayout>

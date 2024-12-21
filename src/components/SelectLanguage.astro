@@ -1,0 +1,105 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import {
+  getLangFromUrl,
+  getLocalizedUrl,
+  getSupportedLanguages,
+  type SupportedLanguage,
+} from 'src/utils/i18n'
+
+const { class: className } = Astro.props
+
+const languageMapping = {
+  en: '🇬🇧 English',
+  de: '🇩🇪 Deutsch',
+  fr: '🇫🇷 Français',
+}
+
+let currentLanguage = getLangFromUrl(Astro.url);
+---
+
+<lang-select>
+  <label>
+    <span class="sr-only">Select Language</span>
+    <select
+      name="languages"
+      id="lang-select"
+      value={currentLanguage}
+      class:list={[ className ]}
+    >
+      {
+        getSupportedLanguages().map((lang: string) => {
+          return (
+            <option
+              class="outline-none"
+              value={getLocalizedUrl(Astro.url, lang as SupportedLanguage)}
+              selected={lang === currentLanguage}
+              set:html={lang}
+              label={languageMapping[lang as SupportedLanguage]}
+            />
+          )
+        })
+      }
+    </select>
+  </label>
+</lang-select>
+<script>
+import routing from '@/i18n/routing'
+import type { SupportedLanguage } from '@/utils'
+
+class LangSelect extends HTMLElement {
+  constructor() {
+    super()
+    const select = this.querySelector('select')
+    if (select) {
+      select.addEventListener('change', (e) => {
+        if (e.currentTarget instanceof HTMLSelectElement) {
+          const prevLang = (localStorage.getItem('lang') ??
+              'en') as SupportedLanguage
+          const lang = e.currentTarget.value.split('/')[1] as SupportedLanguage
+          localStorage.setItem('lang', lang)
+
+          const pathSegments = window.location.pathname
+            .split('/')
+            .filter(Boolean)
+          const newPathSegments = pathSegments.map((segment) => {
+            if (segment === prevLang) {
+              return lang
+            }
+
+            const hasTilde = segment[0] === '~'
+
+            const s = decodeURIComponent(hasTilde ? segment.slice(1) : segment)
+
+            for (const key in routing[prevLang]) {
+              // Stupid TS
+              const k = key as keyof typeof routing[SupportedLanguage]
+              if (routing[prevLang][k].text === s) {
+                return hasTilde ? `~${routing[lang][k].text}` : routing[lang][k].text
+              }
+            }
+
+            return segment
+          })
+
+          const newPath = `/${newPathSegments.join('/')}`
+          window.location.pathname = newPath
+        }
+      })
+    }
+  }
+}
+
+customElements.define('lang-select', LangSelect)
+</script>
+
+<style>
+  select {
+    @apply bg-bgColor border-b border-accent focus:border-accent focus:border;
+  }
+</style>

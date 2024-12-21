@@ -1,0 +1,55 @@
+---
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Lina (Lexedia) L.
+ */
+
+import type { CollectionEntry } from 'astro:content'
+import type { HTMLTag, Polymorphic } from 'astro/types'
+import FormattedDate from '@/components/FormattedDate'
+import { Icon } from 'astro-icon/components'
+import { getLangFromUrl, getSlugFromCollectionEntry } from '@/utils'
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+  post: CollectionEntry<'blog'>;
+  withDesc?: boolean;
+  collection: string;
+}
+
+const { post, withDesc = false, collection } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+const slug = getSlugFromCollectionEntry(post)
+const postDate = post.data.updatedDate ?? post.data.pubDate
+const isPinned = !!post.data.order;
+---
+
+<li>
+  <div class="flex flex-col gap-x-0 sm:flex-row sm:divide-x sm:divide-accent">
+    <FormattedDate
+      date={postDate}
+      locale={lang}
+      class="min-w-[125px] text-gray-600 dark:text-gray-400"
+    />
+    <span class="sm:before:ml-4">
+      <a
+        href={`/${lang}/${collection}/${slug}`}
+        class="anchor-link"
+        data-astro-prefetch
+      >
+        {post.data.title}
+      </a>
+      {
+        isPinned && (
+          <Icon
+            class="h-5 w-5 inline text-accent rotate-45 ml-1"
+            name="mdi:pin"
+            aria-hidden="true"
+            focusable="false"
+          />
+        )
+      }
+    </span>
+  </div>
+  {withDesc && <p class="italic">{post.data.description}</p>}
+</li>
