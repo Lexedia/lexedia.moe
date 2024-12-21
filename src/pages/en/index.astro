@@ -6,7 +6,7 @@
  */
 
 import BaseLayout from '@/layouts/Base'
-import avatar from '@/assets/avatar.jpg'
+import avatar from '@/assets/avatar.png'
 import { Image } from 'astro:assets'
 
 import Friend from '@/components/Friend'
@@ -44,25 +44,4 @@ import friends from '@/data/friends.json'
       }
     </div>
   </section>
-
-  <!-- <section class="mt-16">
-    <h2 class="title">Technologies</h2>
-    <ul class="space-y-4 sm:space-y-2">
-      {
-        tech.map(({ href, title, desc }) => (
-          <li>
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="anchor-link inline-block"
-            >
-              {title}
-            </a>
-            : <p class="inline-block sm:mt-2">{desc}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section> -->
 </BaseLayout>

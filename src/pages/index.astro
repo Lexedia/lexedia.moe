@@ -13,7 +13,5 @@ import { siteConfig } from 'src/consts'
 
 <script>
   const lang = localStorage.getItem('lang')
-  if (lang) {
-    window.location.pathname = lang
-  }
+  window.location.pathname = lang ?? 'en'
 </script>

@@ -37,6 +37,7 @@
     "eslint-plugin-license-header": "^0.6.1",
     "prettier": "^3.4.2",
     "rollup-plugin-visualizer": "^5.12.0",
+    "sharp": "^0.33.5",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.18.0"
   },
