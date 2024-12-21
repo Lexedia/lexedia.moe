@@ -16,19 +16,25 @@ import friends from '@/data/friends.json'
 
 <BaseLayout title="Home" image={avatar}>
   <section class="relative flex flex-col">
-    <h1 class="title">Hey you :3</h1>
-    <div class="absolute right-0 top-0 m-10 md:m-5 my-5 w-64">
-      <Image class="h-fit rounded-md" src={avatar} alt='My avatar' />
+    <div class="flex flex-col max-w-full md:max-w-[calc(100%-18rem)]">
+      <h1 class="title">Hey you :3</h1>
+      <p class="mb-4 sm:mb-8">
+        Hello! I'm Lexedia, Lexie, Lilie, Lina and many others names lol.<br />
+        I'm a developer, mainly focused on backend development, but I also like to do some frontend stuff (&lt;- me when i lie).
+      </p>
     </div>
-    <p class="mb-4 sm:mb-8 max-w-[calc(100%-20rem)]">
-      Hello! I'm Lexedia, Lexie, Lilie, Lina and many others names lol.<br />
-      I'm a developer, mainly focused on backend development, but I also like to do some frontend stuff (&lt;- me when i lie).
-    </p>
+    <div class="w-full md:w-64 flex justify-center md:justify-end">
+      <Image
+        class="rounded-md w-64 md:w-full h-auto object-cover"
+        src={avatar}
+        alt='My avatar'
+      />
+    </div>
   </section>
 
   <section class="mt-8 sm:mt-16">
     <h2 class="title">What do I do?</h2>
-    <p class="mb-4 sm:mb-8 max-w-[calc(100%-20rem)]">
+    <p class="mb-4 sm:mb-8">
       Currently? It's complicated.<br />
       You can check all my projects <a class="anchor-link" href="/en/~projects/pages/1">here</a> though!
     </p>
