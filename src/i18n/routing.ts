@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Lina (Lexedia) L.
+ * Copyright (c) 2025 Lina (Lexedia) L.
  */
 
 import type { TranslationEntries } from './types'
@@ -26,6 +26,9 @@ export default {
     about: {
       text: 'about',
     },
+    writings: {
+      text: 'writings',
+    },
   },
   de: {
     pages: {
@@ -46,6 +49,9 @@ export default {
     about: {
       text: 'über-mich',
     },
+    writings: {
+      text: 'schriftstücke',
+    },
   },
   fr: {
     pages: {
@@ -65,6 +71,9 @@ export default {
     },
     about: {
       text: 'à-propos',
+    },
+    writings: {
+      text: 'écrits',
     },
   },
 } satisfies TranslationRoutingEnries
