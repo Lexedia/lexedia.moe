@@ -3,7 +3,9 @@ title: "Coding Without AI"
 description: "Is AI really that useful when coding?\nTL;DR: Nope."
 pubDate: 2024-12-12
 draft: false
-tags: ['AI']
+tags: 
+  - AI
+  - Random post
 ---
 
 ## Context
