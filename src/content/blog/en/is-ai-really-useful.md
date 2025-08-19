@@ -61,7 +61,7 @@ I know some people are AI evangelists where their minds can't be changed no matt
 
 You still want to use AI? Go ahead, I won't force you to stop, but I will not accept a PR from you.
 
-I was never an AI fan at the beginning, I was just struck by the hype wave and followed it.
+I never was an AI fan at the beginning, I was just struck by the hype wave and followed it.
 
 Still, I am now sick of it, yeah, it's useful, **sometimes**, in **some situations**, but coding is never a good situation.
 The only thing I find AI reasonable for is for injecting `alt` properties dynamically to describe an image for disabled people.
